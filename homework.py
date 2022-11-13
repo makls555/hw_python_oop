@@ -47,7 +47,6 @@ class Training:
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        raise NotImplementedError("Требуется определить get_spent_calories()")
 
     def show_training_info(self) -> InfoMessage:
         """Вернуть информационное сообщение о выполненной тренировке."""
@@ -65,6 +64,7 @@ class Running(Training):
     CALORIES_MEAN_SPEED_MULTIPLIER = 18
     CALORIES_MEAN_SPEED_SHIFT = 1.79
     MIN_IN_H = 60
+    M_IN_KM = 1000
 
     action: int
     duration: float
@@ -73,7 +73,7 @@ class Running(Training):
     def get_spent_calories(self) -> float:
         return ((self.CALORIES_MEAN_SPEED_MULTIPLIER
                 * self.get_mean_speed() + self.CALORIES_MEAN_SPEED_SHIFT)
-                * self.weight / self.M_IN_KM * self.MIN_IN_H * self.duration)
+                * self.weight / self.M_IN_KM * self.duration * self.MIN_IN_H)
 
 
 @dataclass
