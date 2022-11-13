@@ -1,5 +1,5 @@
 from dataclasses import asdict, dataclass
-from typing import Dict, Type
+from typing import List
 
 
 @dataclass
@@ -64,7 +64,7 @@ class Running(Training):
     """Тренировка: бег."""
     CALORIES_MEAN_SPEED_MULTIPLIER = 18
     CALORIES_MEAN_SPEED_SHIFT = 1.79
-    TIME = 60
+    MIN_IN_H = 60
 
     action: int
     duration: float
@@ -73,7 +73,7 @@ class Running(Training):
     def get_spent_calories(self) -> float:
         return ((self.CALORIES_MEAN_SPEED_MULTIPLIER
                 * self.get_mean_speed() + self.CALORIES_MEAN_SPEED_SHIFT)
-                * self.weight / self.M_IN_KM * (self.TIME))
+                * self.weight / self.M_IN_KM * self.MIN_IN_H * self.duration)
 
 
 @dataclass
@@ -82,7 +82,7 @@ class SportsWalking(Training):
     CALORIES_WEIGHT_MULTIPLIER = 0.035
     CALORIES_SPEED_HEIGHT_MULTIPLIER = 0.029
     KMH_IN_MSEC = 0.278
-    CM_IN_M = 2
+    CM_IN_M = 100
     SECONDS = 60
 
     action: int
@@ -95,7 +95,7 @@ class SportsWalking(Training):
         return ((self.CALORIES_WEIGHT_MULTIPLIER
                 * self.weight
                 + (self.get_mean_speed()
-                 ** self.CM_IN_M / self.height)
+                 * self.KMH_IN_MSEC) ** 2 / (self.height / self.CM_IN_M)
                 * self.CALORIES_SPEED_HEIGHT_MULTIPLIER * self.weight)
                 * self.SECONDS * self.duration)
 
@@ -106,8 +106,8 @@ class SportsWalking(Training):
 class Swimming(Training):
 
     LEN_STEP = 1.38
-    CALORIES_WEIGHT_MULTIPLIER = 1.1
-    CALORIES_G = 2
+    CALORIES_MEAN_SPEED_SHIFT = 1.1
+    CALORIES_WEIGHT_MULTIPLIER = 2
 
     action: int
     duration: float
@@ -123,13 +123,14 @@ class Swimming(Training):
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        return ((self.get_mean_speed() + self.CCALORIES_WEIGHT_MULTIPLIER)
-                * self.CALORIES_G * self.weight)
+        return ((self.get_mean_speed() + self.CALORIES_MEAN_SPEED_SHIFT)
+                * self.CALORIES_WEIGHT_MULTIPLIER * self.weight
+                * self.duration)
 
 
-def read_package(workout_type: str, data: list) -> Training:
+def read_package(workout_type: str, data: List[float]) -> Training:
     """Прочитать данные полученные от датчиков."""
-    workout: Dict[str, Type[Training]] = {
+    workout: dict[str, type[Training]] = {
         'SWM': Swimming,
         'RUN': Running,
         'WLK': SportsWalking
