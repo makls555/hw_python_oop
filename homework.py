@@ -47,6 +47,7 @@ class Training:
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
+        pass
 
     def show_training_info(self) -> InfoMessage:
         """Вернуть информационное сообщение о выполненной тренировке."""
@@ -66,8 +67,6 @@ class Running(Training):
     MIN_IN_H = 60
     M_IN_KM = 1000
 
-    action: int
-    duration: float
     weight: float
 
     def get_spent_calories(self) -> float:
@@ -78,6 +77,7 @@ class Running(Training):
 
 @dataclass
 class SportsWalking(Training):
+    """Тренировка: спортивная ходьба."""
 
     CALORIES_WEIGHT_MULTIPLIER = 0.035
     CALORIES_SPEED_HEIGHT_MULTIPLIER = 0.029
@@ -85,9 +85,6 @@ class SportsWalking(Training):
     CM_IN_M = 100
     SECONDS = 60
 
-    action: int
-    duration: float
-    weight: float
     height: float
 
     def get_spent_calories(self) -> float:
@@ -99,11 +96,10 @@ class SportsWalking(Training):
                 * self.CALORIES_SPEED_HEIGHT_MULTIPLIER * self.weight)
                 * self.SECONDS * self.duration)
 
-    """Тренировка: спортивная ходьба."""
-
 
 @dataclass
 class Swimming(Training):
+    """Тренировка: плавание."""
 
     LEN_STEP = 1.38
     CALORIES_MEAN_SPEED_SHIFT = 1.1
@@ -114,7 +110,6 @@ class Swimming(Training):
     weight: float
     length_pool: float
     count_pool: float
-    """Тренировка: плавание."""
 
     def get_mean_speed(self) -> float:
         """Получить среднюю скорость движения."""
